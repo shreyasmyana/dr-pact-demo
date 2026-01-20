@@ -1,0 +1,32 @@
+{
+  "name": "insulin-wrapper-service",
+  "version": "1.0.0",
+  "description": "TypeScript Consumer - Wrapper for Insulin Risk Algorithm Service",
+  "main": "dist/insulinClient.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --runInBand",
+    "test:pact": "jest --testPathPattern=contract --runInBand",
+    "test:watch": "jest --watch",
+    "pact:publish": "echo 'Publishing pacts...' && ls -la ../pacts/"
+  },
+  "keywords": [
+    "insulin",
+    "pact",
+    "contract-testing",
+    "medical-device"
+  ],
+  "author": "Hackathon Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@pact-foundation/pact": "^16.0.4",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.3.0"
+  }
+}

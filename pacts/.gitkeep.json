@@ -1,0 +1,15 @@
+{
+  "_comment": "This is a placeholder. Real pact files will be generated when you run the consumer tests.",
+  "consumer": {
+    "name": "InsulinWrapperService"
+  },
+  "provider": {
+    "name": "RiskAlgoService"
+  },
+  "interactions": [],
+  "metadata": {
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  }
+}

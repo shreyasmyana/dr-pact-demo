@@ -1,0 +1,13 @@
+# AI Agent Dependencies
+
+# FREE LLM Providers (Recommended)
+google-genai>=1.0.0           # Google Gemini - FREE (new package)
+groq>=0.4.0                   # Groq - FREE
+requests>=2.31.0              # For Ollama (local) - FREE
+
+# Paid LLM Providers (Optional)
+openai>=1.0.0                 # OpenAI GPT-4
+anthropic>=0.7.0              # Anthropic Claude
+
+# Utilities
+python-dotenv>=1.0.0

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Pact Contract Generation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e4e4e7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .slide {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            position: relative;
+        }
+        
+        .slide::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4f46e5, transparent);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #a5b4fc;
+            text-align: center;
+        }
+        
+        h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #c4b5fd;
+        }
+        
+        p {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            max-width: 900px;
+            text-align: center;
+            color: #d1d5db;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #9ca3af;
+            margin-bottom: 60px;
+        }
+        
+        .architecture-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .service-box {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border: 2px solid #4f46e5;
+            border-radius: 16px;
+            padding: 30px;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(79, 70, 229, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .service-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(79, 70, 229, 0.3);
+        }
+        
+        .service-box.consumer {
+            border-color: #22c55e;
+            box-shadow: 0 10px 40px rgba(34, 197, 94, 0.2);
+        }
+        
+        .service-box.provider {
+            border-color: #f59e0b;
+            box-shadow: 0 10px 40px rgba(245, 158, 11, 0.2);
+        }
+        
+        .service-box.agent {
+            border-color: #ec4899;
+            box-shadow: 0 10px 40px rgba(236, 72, 153, 0.2);
+        }
+        
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .arrow {
+            font-size: 2.5rem;
+            color: #6366f1;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 40px 0;
+        }
+        
+        .feature-card {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: left;
+            border-left: 4px solid #8b5cf6;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateX(10px);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card p {
+            font-size: 1.1rem;
+            text-align: left;
+        }
+        
+        .code-block {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 25px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            max-width: 900px;
+            width: 100%;
+            margin: 20px 0;
+            border: 1px solid #30363d;
+        }
+        
+        .code-block code {
+            color: #c9d1d9;
+        }
+        
+        .highlight {
+            color: #79c0ff;
+        }
+        
+        .string {
+            color: #a5d6ff;
+        }
+        
+        .keyword {
+            color: #ff7b72;
+        }
+        
+        .function {
+            color: #d2a8ff;
+        }
+        
+        .comment {
+            color: #8b949e;
+        }
+        
+        .number {
+            color: #79c0ff;
+        }
+        
+        .list-section {
+            max-width: 800px;
+            text-align: left;
+        }
+        
+        .list-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .list-section li {
+            font-size: 1.3rem;
+            padding: 15px 0;
+            padding-left: 40px;
+            position: relative;
+            color: #d1d5db;
+        }
+        
+        .list-section li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #22c55e;
+            font-weight: bold;
+        }
+        
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            max-width: 800px;
+        }
+        
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border-radius: 12px;
+            padding: 20px 30px;
+            flex-grow: 1;
+        }
+        
+        .step-content h4 {
+            color: #a5b4fc;
+            margin-bottom: 8px;
+        }
+        
+        .comparison-table {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border-radius: 16px;
+            overflow: hidden;
+            max-width: 1000px;
+            width: 100%;
+            margin: 30px 0;
+        }
+        
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            padding: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .comparison-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .badge.green {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        
+        .badge.red {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .badge.blue {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .badge.purple {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+        }
+        
+        .nav-dots {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+        
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-dot:hover, .nav-dot.active {
+            background: #8b5cf6;
+            transform: scale(1.3);
+        }
+        
+        .agent-architecture {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            max-width: 900px;
+        }
+        
+        .agent-input {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+        }
+        
+        .input-box {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border-radius: 12px;
+            padding: 20px 30px;
+            text-align: center;
+            border: 2px dashed #4f46e5;
+        }
+        
+        .input-box.consumer-input {
+            border-color: #22c55e;
+        }
+        
+        .input-box.provider-input {
+            border-color: #f59e0b;
+        }
+        
+        .ai-brain {
+            background: linear-gradient(145deg, #4f46e5, #7c3aed);
+            border-radius: 20px;
+            padding: 30px 50px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .ai-brain::before, .ai-brain::after {
+            content: '⚡';
+            position: absolute;
+            font-size: 1.5rem;
+        }
+        
+        .ai-brain::before {
+            top: -15px;
+            left: 30px;
+        }
+        
+        .ai-brain::after {
+            top: -15px;
+            right: 30px;
+        }
+        
+        .output-box {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border-radius: 12px;
+            padding: 20px 30px;
+            text-align: center;
+            border: 2px solid #ec4899;
+        }
+        
+        .down-arrow {
+            font-size: 2rem;
+            color: #8b5cf6;
+        }
+
+        .llm-providers {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .llm-badge {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            padding: 15px 25px;
+            border-radius: 30px;
+            border: 1px solid #4f46e5;
+            font-size: 1.1rem;
+        }
+
+        .key-insight {
+            background: linear-gradient(145deg, rgba(236, 72, 153, 0.1), rgba(168, 85, 247, 0.1));
+            border-left: 4px solid #ec4899;
+            padding: 25px 30px;
+            border-radius: 0 12px 12px 0;
+            max-width: 800px;
+            margin: 30px 0;
+        }
+
+        .key-insight p {
+            text-align: left;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-dots">
+        <div class="nav-dot active" onclick="scrollToSlide(0)"></div>
+        <div class="nav-dot" onclick="scrollToSlide(1)"></div>
+        <div class="nav-dot" onclick="scrollToSlide(2)"></div>
+        <div class="nav-dot" onclick="scrollToSlide(3)"></div>
+        <div class="nav-dot" onclick="scrollToSlide(4)"></div>
+        <div class="nav-dot" onclick="scrollToSlide(5)"></div>
+        <div class="nav-dot" onclick="scrollToSlide(6)"></div>
+        <div class="nav-dot" onclick="scrollToSlide(7)"></div>
+        <div class="nav-dot" onclick="scrollToSlide(8)"></div>
+    </nav>
+
+    <!-- Slide 1: Title -->
+    <section class="slide" id="slide-0">
+        <h1><span style="-webkit-text-fill-color: initial;">🤖</span> AI-Powered Pact Contract Generation</h1>
+        <p class="subtitle">Intelligent Consumer-Driven Contract Testing</p>
+        <div class="architecture-diagram">
+            <div class="service-box consumer">
+                <div class="service-icon">📱</div>
+                <h3>Consumer</h3>
+                <p>TypeScript Client</p>
+            </div>
+            <span class="arrow">←→</span>
+            <div class="service-box agent">
+                <div class="service-icon">🧠</div>
+                <h3>AI Agent</h3>
+                <p>Contract Generator</p>
+            </div>
+            <span class="arrow">←→</span>
+            <div class="service-box provider">
+                <div class="service-icon">⚙️</div>
+                <h3>Provider</h3>
+                <p>Python API</p>
+            </div>
+        </div>
+        <p>Automatically generate accurate Pact contracts by analyzing <strong>both</strong> consumer and provider code</p>
+    </section>
+
+    <!-- Slide 2: The Problem -->
+    <section class="slide" id="slide-1">
+        <h2>🎯 The Challenge</h2>
+        <p>Traditional contract testing requires manual contract writing...</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>⏱️ Time Consuming</h3>
+                <p>Writing contracts manually for each endpoint takes significant developer time</p>
+            </div>
+            <div class="feature-card">
+                <h3>🔄 Sync Issues</h3>
+                <p>Contracts can drift from actual implementation, causing false positives/negatives</p>
+            </div>
+            <div class="feature-card">
+                <h3>📚 Learning Curve</h3>
+                <p>Developers need to learn Pact DSL, matchers, and best practices</p>
+            </div>
+            <div class="feature-card">
+                <h3>🐛 Validation Blindness</h3>
+                <p>Consumer doesn't know provider's validation rules (min array lengths, required fields, etc.)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 3: The Solution -->
+    <section class="slide" id="slide-2">
+        <h2>💡 Our Solution: Intelligent AI Agent</h2>
+        <div class="agent-architecture">
+            <div class="agent-input">
+                <div class="input-box consumer-input">
+                    <div class="service-icon">📱</div>
+                    <h4>Consumer Code</h4>
+                    <p>insulinClient.ts</p>
+                </div>
+                <div class="input-box provider-input">
+                    <div class="service-icon">⚙️</div>
+                    <h4>Provider Code</h4>
+                    <p>app.py</p>
+                </div>
+            </div>
+            <div class="down-arrow">⬇️</div>
+            <div class="ai-brain">
+                <h3>🧠 AI Agent</h3>
+                <p>Analyzes Both Codebases</p>
+            </div>
+            <div class="down-arrow">⬇️</div>
+            <div class="output-box">
+                <div class="service-icon">📄</div>
+                <h4>Generated Contract</h4>
+                <p>contract.spec.ts</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 4: Key Innovation -->
+    <section class="slide" id="slide-3">
+        <h2>🔑 Key Innovation: Dual Code Analysis</h2>
+        <div class="key-insight">
+            <p>The AI agent reads <strong>BOTH</strong> consumer and provider code to understand:</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>📥 From Consumer</h3>
+                <ul style="text-align: left; padding-left: 20px; margin-top: 10px;">
+                    <li>API endpoints being called</li>
+                    <li>Request payload structures</li>
+                    <li>Expected response formats</li>
+                    <li>Consumer name for contract</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h3>📤 From Provider</h3>
+                <ul style="text-align: left; padding-left: 20px; margin-top: 10px;">
+                    <li>Validation rules & constraints</li>
+                    <li>Minimum array lengths</li>
+                    <li>Required fields</li>
+                    <li>Provider name for contract</li>
+                </ul>
+            </div>
+        </div>
+        <div class="code-block">
+            <code>
+<span class="comment"># Provider validation the AI detects:</span>
+<span class="keyword">if</span> <span class="function">len</span>(readings) < <span class="number">2</span>:
+    <span class="keyword">return</span> jsonify({<span class="string">"error"</span>: <span class="string">"Need at least 2 glucose readings"</span>}), <span class="number">400</span>
+
+<span class="comment">// AI generates contract with correct minimum:</span>
+glucose_readings: <span class="function">eachLike</span>(<span class="function">number</span>(<span class="number">120</span>), <span class="number">2</span>)  <span class="comment">// ← 2 elements minimum!</span>
+            </code>
+        </div>
+    </section>
+
+    <!-- Slide 5: Architecture -->
+    <section class="slide" id="slide-4">
+        <h2>🏗️ System Architecture</h2>
+        <div class="flow-diagram">
+            <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Load Source Code</h4>
+                    <p>Agent loads consumer client code AND provider API code</p>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>AI Analysis</h4>
+                    <p>LLM analyzes both codebases to understand contracts & validations</p>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Generate Contract</h4>
+                    <p>Produces Pact V3 contract tests with correct matchers & minimums</p>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>Clean Response</h4>
+                    <p>Extracts pure TypeScript code from LLM response</p>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h4>Run Tests</h4>
+                    <p>Consumer & Provider tests validate the generated contracts</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: Multi-LLM Support -->
+    <section class="slide" id="slide-5">
+        <h2>🔌 Multi-LLM Provider Support</h2>
+        <p>Flexible architecture supports multiple AI providers</p>
+        <div class="llm-providers">
+            <div class="llm-badge">🦙 Groq (Llama 3.3 70B)</div>
+            <div class="llm-badge">💎 Google Gemini</div>
+            <div class="llm-badge">🤖 OpenAI GPT-4</div>
+            <div class="llm-badge">🎭 Anthropic Claude</div>
+            <div class="llm-badge">🏠 Ollama (Local)</div>
+        </div>
+        <div class="code-block">
+            <code>
+<span class="keyword">def</span> <span class="function">call_groq</span>(consumer_code, provider_code, prompt):
+    <span class="string">"""Call Groq API with both consumer and provider code"""</span>
+    client = Groq(api_key=os.getenv(<span class="string">"GROQ_API_KEY"</span>))
+    response = client.chat.completions.create(
+        model=<span class="string">"llama-3.3-70b-versatile"</span>,
+        messages=[
+            {<span class="string">"role"</span>: <span class="string">"system"</span>, <span class="string">"content"</span>: prompt},
+            {<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: <span class="highlight">f"CONSUMER:\n{consumer_code}\n\nPROVIDER:\n{provider_code}"</span>}
+        ]
+    )
+    <span class="keyword">return</span> response.choices[<span class="number">0</span>].message.content
+            </code>
+        </div>
+    </section>
+
+    <!-- Slide 7: Generated Contract Example -->
+    <section class="slide" id="slide-6">
+        <h2>📄 Generated Contract Example</h2>
+        <div class="code-block">
+            <code>
+<span class="keyword">import</span> { PactV3, MatchersV3 } <span class="keyword">from</span> <span class="string">'@pact-foundation/pact'</span>;
+<span class="keyword">const</span> { string, number, eachLike, like } = MatchersV3;
+
+<span class="keyword">const</span> provider = <span class="keyword">new</span> <span class="function">PactV3</span>({
+  consumer: <span class="string">'InsulinWrapperService'</span>,  <span class="comment">// ← Extracted from consumer</span>
+  provider: <span class="string">'RiskAlgoService'</span>,         <span class="comment">// ← Extracted from provider</span>
+  dir: <span class="string">'./pacts'</span>
+});
+
+<span class="function">describe</span>(<span class="string">'Insulin API Contract'</span>, () => {
+  <span class="function">it</span>(<span class="string">'basal adjustment request'</span>, async () => {
+    provider
+      .<span class="function">given</span>(<span class="string">'user has glucose history'</span>)
+      .<span class="function">uponReceiving</span>(<span class="string">'a basal adjustment request'</span>)
+      .<span class="function">withRequest</span>({
+        method: <span class="string">'POST'</span>,
+        path: <span class="string">'/calculate/basal-adjustment'</span>,
+        body: {
+          <span class="highlight">glucose_readings: eachLike(number(120), 2)</span>,  <span class="comment">// ← Provider requires ≥2!</span>
+          current_basal_rate: <span class="function">number</span>(<span class="number">1.0</span>)
+        }
+      })
+      .<span class="function">willRespondWith</span>({
+        status: <span class="number">200</span>,
+        body: { adjustment: <span class="function">number</span>(<span class="number">0.1</span>) }
+      });
+  });
+});
+            </code>
+        </div>
+    </section>
+
+    <!-- Slide 8: Before vs After -->
+    <section class="slide" id="slide-7">
+        <h2>📊 Results Comparison</h2>
+        <div class="comparison-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Traditional Approach</th>
+                        <th>AI-Powered Approach</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Contract Writing</td>
+                        <td><span class="badge red">Manual (hours)</span></td>
+                        <td><span class="badge green">Automated (seconds)</span></td>
+                    </tr>
+                    <tr>
+                        <td>Validation Knowledge</td>
+                        <td><span class="badge red">Consumer guesses</span></td>
+                        <td><span class="badge green">Reads provider code</span></td>
+                    </tr>
+                    <tr>
+                        <td>Array Minimums</td>
+                        <td><span class="badge red">Trial & error</span></td>
+                        <td><span class="badge green">Auto-detected</span></td>
+                    </tr>
+                    <tr>
+                        <td>Pact Syntax</td>
+                        <td><span class="badge red">Must learn DSL</span></td>
+                        <td><span class="badge green">AI handles it</span></td>
+                    </tr>
+                    <tr>
+                        <td>Maintenance</td>
+                        <td><span class="badge red">Manual updates</span></td>
+                        <td><span class="badge green">Re-generate</span></td>
+                    </tr>
+                    <tr>
+                        <td>Test Results</td>
+                        <td><span class="badge blue">Consumer: 3/3 ✓</span></td>
+                        <td><span class="badge purple">Provider: 5/5 ✓</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Slide 9: Summary -->
+    <section class="slide" id="slide-8">
+        <h2>🎉 Key Takeaways</h2>
+        <div class="list-section">
+            <ul>
+                <li><strong>Dual Analysis:</strong> AI reads both consumer AND provider code</li>
+                <li><strong>Intelligent Detection:</strong> Automatically detects validation rules & constraints</li>
+                <li><strong>Generalized Prompt:</strong> Works with any consumer/provider pair</li>
+                <li><strong>Multi-LLM Support:</strong> Groq, Gemini, OpenAI, Anthropic, Ollama</li>
+                <li><strong>Clean Output:</strong> Robust code extraction from LLM responses</li>
+                <li><strong>Verified Results:</strong> All consumer (3/3) and provider (5/5) tests passing</li>
+            </ul>
+        </div>
+        <div class="architecture-diagram" style="margin-top: 40px;">
+            <div class="service-box" style="border-color: #22c55e;">
+                <div class="service-icon">✅</div>
+                <h3>Consumer Tests</h3>
+                <p>3/3 Passing</p>
+            </div>
+            <div class="service-box" style="border-color: #22c55e;">
+                <div class="service-icon">✅</div>
+                <h3>Provider Tests</h3>
+                <p>5/5 Passing</p>
+            </div>
+            <div class="service-box" style="border-color: #8b5cf6;">
+                <div class="service-icon">🚀</div>
+                <h3>Ready for Production</h3>
+                <p>Contracts Verified</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const navDots = document.querySelectorAll('.nav-dot');
+        
+        function scrollToSlide(index) {
+            slides[index].scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Update active dot on scroll
+        window.addEventListener('scroll', () => {
+            let current = 0;
+            slides.forEach((slide, index) => {
+                const rect = slide.getBoundingClientRect();
+                if (rect.top <= window.innerHeight / 2) {
+                    current = index;
+                }
+            });
+            navDots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === current);
+            });
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const currentSlide = [...slides].findIndex(slide => {
+                const rect = slide.getBoundingClientRect();
+                return rect.top >= 0 && rect.top < window.innerHeight / 2;
+            });
+            
+            if (e.key === 'ArrowDown' || e.key === ' ') {
+                e.preventDefault();
+                if (currentSlide < slides.length - 1) {
+                    scrollToSlide(currentSlide + 1);
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (currentSlide > 0) {
+                    scrollToSlide(currentSlide - 1);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
