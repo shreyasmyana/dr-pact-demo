@@ -1,6 +1,6 @@
-# 🏥 DR-PACT Demo: AI-Driven Contract Testing for Medical Devices
+# 🏥 DR-PACT: AI-Driven Contract Testing for Medical Devices
 
-> **Hackathon Showcase**: Demonstrating how AI agents can automatically generate contract tests between microservices, preventing deadly integration errors in medical device software.
+> Automatically generate contract tests between microservices to prevent integration errors in medical device software.
 
 ## 📋 The Problem
 
@@ -86,26 +86,7 @@ python agent/generator.py --provider openai --verify
 python agent/generator.py --provider anthropic --verify
 ```
 
-## 🎭 Demo Script (For Hackathon Presentation)
-
-### Act 1: "The Happy Path" (2 min)
-1. Show `insulinClient.ts` - explain it's a TypeScript wrapper
-2. Show `app.py` - explain it's the Python algorithm
-3. Run `python agent/generator.py --verify`
-4. Show generated contract test and passing results
-
-### Act 2: "The Catastrophe" (3 min)
-1. **Break the Provider**: Change `recommended_bolus_units` to `recommended_dose` in `app.py`
-2. Run consumer tests → They still pass! (Mock doesn't know)
-3. Run provider verification → **FAILS!** Contract catches the bug!
-4. Show the error message highlighting the mismatch
-
-### Act 3: "The Save" (2 min)
-1. Fix the provider
-2. Show both tests passing
-3. Emphasize: "This could have been a 10x insulin overdose"
-
-## 🧪 Manual Testing Commands
+## 🧪 Testing Commands
 
 ```bash
 # Start the Python provider
@@ -155,7 +136,7 @@ Content-Type: application/json
 
 ## ⚠️ Disclaimer
 
-This is a **DEMO PROJECT** for educational and hackathon purposes only. 
+This is a **DEMONSTRATION PROJECT** for educational purposes only. 
 
 **NOT FOR ACTUAL MEDICAL USE.**
 
@@ -164,14 +145,6 @@ Real insulin dosing algorithms require:
 - Clinical validation
 - Patient-specific parameters
 - Professional medical oversight
-
-## 🏆 Hackathon Tips
-
-1. **Side-by-Side View**: Open `insulinClient.ts` and `app.py` side by side
-2. **Break Things On Purpose**: The demo is about showing what happens when things go wrong
-3. **Medical Narrative**: Use terms like "hypoglycemia", "bolus", "patient safety"
-4. **Show the JSON**: The Pact contract file is human-readable - show it!
-5. **Time the Demo**: Practice to fit in 5-7 minutes
 
 ## 📚 Learn More
 
