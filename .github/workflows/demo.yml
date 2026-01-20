@@ -10,6 +10,8 @@ on:
 jobs:
   ai-contract-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Allow workflow to commit and push changes
 
     steps:
     # 1. Checkout the code
@@ -49,7 +51,26 @@ jobs:
     - name: 🧪 Run Consumer Tests (Generate Pact JSON)
       run: cd consumer-ts && npm test
 
-    # 7. ✅ Verify Provider
+    # 7. 💾 Commit Generated Files
+    # This commits the AI-generated contract files back to the repo
+    - name: 💾 Commit Generated Contract Files
+      if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add consumer-ts/tests/contract.spec.ts pacts/*.json
+        # Only commit if there are changes
+        git diff --staged --quiet || git commit -m "🤖 Auto-generate contract files [skip ci]"
+    
+    # 8. 📤 Push Changes
+    - name: 📤 Push Generated Files
+      if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+
+    # 9. ✅ Verify Provider
     # We start the Flask app in the background using '&'
     # Then we wait a few seconds for it to boot up
     # Then we run the tests against 'localhost'
